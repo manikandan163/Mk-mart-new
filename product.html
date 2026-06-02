@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Details</title>
+
+<!-- 🔥 IMPORT SHARED PRODUCTS -->
+<script src="products.js"></script>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f5f5f5;
+    padding-bottom:80px;
+}
+
+.container{
+    padding:10px;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+    border-radius:10px;
+}
+
+h2{
+    margin:10px 0;
+}
+
+.price{
+    color:green;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.qty-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:10px 0;
+}
+
+.qty-box button{
+    padding:8px 12px;
+    border:none;
+    background:#2874f0;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.btn{
+    width:100%;
+    padding:12px;
+    background:#2874f0;
+    color:white;
+    border:none;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+.buy{
+    width:100%;
+    padding:12px;
+    background:green;
+    color:white;
+    border:none;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+/* NAVBAR */
+.navbar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:60px;
+    background:white;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    box-shadow:0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar a{
+    text-decoration:none;
+    color:#333;
+    font-size:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.navbar a.active{
+    color:#2874f0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="box"></div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <a href="index.html">🏠<span>Home</span></a>
+    <a href="cart.html">🛒<span>Cart</span></a>
+    <a href="orders.html">📦<span>Orders</span></a>
+    <a href="profile.html">👤<span>Profile</span></a>
+</div>
+
+<script>
+
+// GET SELECTED PRODUCT
+let id = localStorage.getItem("selectedProduct");
+
+// FIND FROM GLOBAL PRODUCTS (products.js)
+let product = products.find(p => p.id == id);
+
+let qty = 1;
+
+// RENDER PAGE
+function render(){
+
+    if(!product){
+        document.getElementById("box").innerHTML = "<h3>Product not found</h3>";
+        return;
+    }
+
+    document.getElementById("box").innerHTML = `
+        <img src="${product.img}">
+
+        <div class="card">
+            <h2>${product.name}</h2>
+            <div class="price">₹${product.price}</div>
+            <p>Category: ${product.cat}</p>
+
+            <div class="qty-box">
+                <button onclick="dec()">-</button>
+                <span>${qty}</span>
+                <button onclick="inc()">+</button>
+            </div>
+
+            <h3>Total: ₹${product.price * qty}</h3>
+
+            <button class="btn" onclick="addToCart()">
+                Add to Cart
+            </button>
+
+            <button class="buy" onclick="buyNow()">
+                Buy Now
+            </button>
+        </div>
+    `;
+}
+
+// INCREASE QTY
+function inc(){
+    qty++;
+    render();
+}
+
+// DECREASE QTY
+function dec(){
+    if(qty > 1){
+        qty--;
+        render();
+    }
+}
+
+// ADD TO CART
+function addToCart(){
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    let exist = cart.find(p => p.id == product.id);
+
+    if(exist){
+        exist.qty += qty;
+    }else{
+        cart.push({...product, qty: qty});
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    alert("Added to cart ✔");
+}
+
+// BUY NOW (future backend)
+function buyNow(){
+    alert("Buy Now will connect to backend soon 🚀");
+}
+
+render();
+
+</script>
+
+</body>
+</html>
